@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -74,9 +73,10 @@ func queryHandlers(c *gin.Context){
 
 //membuat struct untuk menangkap data post request
 type BookInput struct{
-	Title string
-	Price int
-	SubTitle string `json:"sub_title"`
+	//mengharuskan data json untuk diisi
+	Title string `json:"title" binding:"required"`
+	Price int	`json:"price" binding:"required,number"`
+
 }
 //function handler query untuk post
 func postBookHandler(c *gin.Context){
@@ -85,13 +85,13 @@ func postBookHandler(c *gin.Context){
 
 	err := c.ShouldBindJSON(&bookInput)
 	if err != nil{
-		log.Fatal(err)
+		c.JSON(http.StatusBadRequest, "Empty input is not allowed")
+	}else {
+		//mengembalikan nilai json
+		//status 201 untuk post
+		c.JSON(http.StatusCreated, gin.H{
+			"title": bookInput.Title,
+			"price": bookInput.Price,
+		})
 	}
-	//mengembalikan nilai json
-	//status 201 untuk post
-	c.JSON(http.StatusCreated, gin.H{
-		"title": bookInput.Title,
-		"price": bookInput.Price,
-		"sub_title": bookInput.SubTitle,
-	})
 }
