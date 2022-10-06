@@ -87,5 +87,6 @@ func postBookHandler(c *gin.Context){
 		log.Fatal(err)
 	}
 	//mengembalikan nilai json
-	c.JSON(http.StatusOK, gin.H{"title": bookInput.Title, "price": bookInput.Price})
+	//status 201 untuk post
+	c.JSON(http.StatusCreated, gin.H{"title": bookInput.Title, "price": bookInput.Price})
 }
