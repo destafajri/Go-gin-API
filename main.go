@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -85,7 +87,11 @@ func postBookHandler(c *gin.Context){
 
 	err := c.ShouldBindJSON(&bookInput)
 	if err != nil{
-		c.JSON(http.StatusBadRequest, "Empty input is not allowed")
+		//validation error
+		for _, e:= range err.(validator.ValidationErrors){
+			errorMessage := fmt.Sprintf("Error on %s, where condition %s", e.Field(), e.ActualTag())
+			c.JSON(http.StatusBadRequest, errorMessage)
+		}
 
 	}else {
 		//status 201 untuk post
