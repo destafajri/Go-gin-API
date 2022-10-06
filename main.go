@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	/*Database*/
+/****************Database***************/
 	//database connection
 	dsn := "root:@tcp(127.0.0.1:3306)/intern_privy?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -24,7 +24,22 @@ func main() {
 	//database auto migrate
 	db.AutoMigrate(&books.Book{})
 
-	/*API Request*/
+	/*****CRUD database***/
+	//Create
+	book := books.Book{}
+	book.Title = "Limsio"
+	book.Price = 50000
+	book.Discount = 10
+	book.Rating = 5
+	book.Description = "Buku yang biasa aja"
+
+	er := db.Create(&book).Error
+	if er != nil{
+		log.Fatal("Create request error")
+	}
+
+
+/*********API Request**********/
 	//router default setting
 	router := gin.Default()
 	//versioning v1
