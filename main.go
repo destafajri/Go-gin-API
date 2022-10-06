@@ -24,7 +24,7 @@ func main() {
 	//Post request
 	router.POST("/books", postBookHandler)
 
-	router.Run()
+	router.Run(":8000")
 }
 
 /*GET*/
