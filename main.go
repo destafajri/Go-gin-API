@@ -76,6 +76,7 @@ func queryHandlers(c *gin.Context){
 type BookInput struct{
 	Title string
 	Price int
+	SubTitle string `json:"sub_title"`
 }
 //function handler query untuk post
 func postBookHandler(c *gin.Context){
@@ -88,5 +89,9 @@ func postBookHandler(c *gin.Context){
 	}
 	//mengembalikan nilai json
 	//status 201 untuk post
-	c.JSON(http.StatusCreated, gin.H{"title": bookInput.Title, "price": bookInput.Price})
+	c.JSON(http.StatusCreated, gin.H{
+		"title": bookInput.Title,
+		"price": bookInput.Price,
+		"sub_title": bookInput.SubTitle,
+	})
 }
