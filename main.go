@@ -12,7 +12,12 @@ import (
 func main() {
 	router := gin.Default()
 
+	//versioning v1
+	v1 := router.Group("/v1")
+
 	router.GET("/", rootHandler)
+	//v1 path for root request
+	v1.GET("/", rootHandler)
 	//path dengan variable id
 	router.GET("/books/:id", booksHandler)
 	//path dengan variable id dan title
