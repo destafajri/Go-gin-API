@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
 
+	"pustaka-api/books"
 	"pustaka-api/handler"
 
 	"gorm.io/driver/mysql"
@@ -13,14 +13,18 @@ import (
 )
 
 func main() {
+	/*Database*/
 	//database connection
 	dsn := "root:@tcp(127.0.0.1:3306)/intern_privy?charset=utf8mb4&parseTime=True&loc=Local"
-	_, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil{
 		log.Fatal("Database connection error")
 	}
-	fmt.Println("Database Connected....................................................")
 
+	//database auto migrate
+	db.AutoMigrate(&books.Book{})
+
+	/*API Request*/
 	//router default setting
 	router := gin.Default()
 	//versioning v1

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
-	"pustaka-api/book"
+	"pustaka-api/books"
 )
 
 /*GET*/
@@ -57,7 +57,7 @@ func QueryHandlers(c *gin.Context){
 //function handler query untuk post
 func PostBookHandler(c *gin.Context){
 	//membuat variable input
-	var bookInput book.BookInput
+	var bookInput books.BookInput
 
 	err := c.ShouldBindJSON(&bookInput)
 	if err != nil{
