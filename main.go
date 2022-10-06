@@ -16,5 +16,12 @@ func main() {
 		})
 	})
 
+	router.GET("/status", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"name" : "Desta",
+			"status" : "Mencari Kerja",
+		})
+	})
+
 	router.Run()
 }
