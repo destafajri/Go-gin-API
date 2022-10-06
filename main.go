@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -76,7 +77,7 @@ func queryHandlers(c *gin.Context){
 type BookInput struct{
 	//mengharuskan data json untuk diisi
 	Title string `json:"title" binding:"required"`
-	Price int	`json:"price" binding:"required,number"`
+	Price json.Number	`json:"price" binding:"required,number"`
 	Email string `json:"email" binding:"required,email"`
 
 }
@@ -87,10 +88,15 @@ func postBookHandler(c *gin.Context){
 
 	err := c.ShouldBindJSON(&bookInput)
 	if err != nil{
+		//slice err
+		errorMessages := []string{}
 		//validation error
 		for _, e:= range err.(validator.ValidationErrors){
 			errorMessage := fmt.Sprintf("Error on %s, where condition %s", e.Field(), e.ActualTag())
-			c.JSON(http.StatusBadRequest, errorMessage)
+			errorMessages = append(errorMessages, errorMessage)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"errors" : errorMessages,
+			})
 		}
 
 	}else {
