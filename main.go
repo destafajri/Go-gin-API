@@ -39,7 +39,7 @@ func rootHandler(c *gin.Context) {
 func booksHandler(c *gin.Context){
 	//mengambil parameter id
 	id := c.Param("id")
-	//mengembalikan nilai json
+
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
@@ -47,7 +47,7 @@ func booksHandlers(c *gin.Context){
 	//mengambil parameter id dan title
 	id := c.Param("id")
 	title := c.Param("title")
-	//mengembalikan nilai json
+
 	c.JSON(http.StatusOK, gin.H{"id": id, "title": title})
 }
 
@@ -55,7 +55,7 @@ func booksHandlers(c *gin.Context){
 func queryHandler(c *gin.Context){
 	//mengambil query id
 	id := c.Query("id")
-	//mengembalikan nilai json
+
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
@@ -65,7 +65,6 @@ func queryHandlers(c *gin.Context){
 	title := c.Query("title")
 	price := c.Query("price")
 	
-	//mengembalikan nilai json
 	c.JSON(http.StatusOK, gin.H{"title": title, "price": price})
 }
 
@@ -76,6 +75,7 @@ type BookInput struct{
 	//mengharuskan data json untuk diisi
 	Title string `json:"title" binding:"required"`
 	Price int	`json:"price" binding:"required,number"`
+	Email string `json:"email" binding:"required,email"`
 
 }
 //function handler query untuk post
@@ -86,12 +86,13 @@ func postBookHandler(c *gin.Context){
 	err := c.ShouldBindJSON(&bookInput)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, "Empty input is not allowed")
+
 	}else {
-		//mengembalikan nilai json
 		//status 201 untuk post
 		c.JSON(http.StatusCreated, gin.H{
 			"title": bookInput.Title,
 			"price": bookInput.Price,
+			"email" : bookInput.Email,
 		})
 	}
 }
