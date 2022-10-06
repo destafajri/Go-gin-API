@@ -15,4 +15,6 @@ func main() {
 			"bio" : "Programmer",
 		})
 	})
+
+	router.Run()
 }
