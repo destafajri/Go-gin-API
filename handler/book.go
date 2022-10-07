@@ -20,12 +20,47 @@ func NewBookHandler(bookService books.Service) *bookHandler{
 	return &bookHandler{bookService}
 }
 
+
+/*POST*/
+//function handler query untuk post
+func (handler *bookHandler)PostBookHandler(c *gin.Context){
+	//membuat variable input
+	var bookInput books.BookRequest
+
+	err := c.ShouldBindJSON(&bookInput)
+	if err != nil{
+		//slice err
+		errorMessages := []string{}
+		//validation error
+		for _, e:= range err.(validator.ValidationErrors){
+			errorMessage := fmt.Sprintf("Error on %s, where condition %s", e.Field(), e.ActualTag())
+			errorMessages = append(errorMessages, errorMessage)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"errors" : errorMessages,
+			})
+		}
+	}else {
+		//status 201 untuk post
+		book, err := handler.bookService.Create(bookInput)
+		if err !=nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"errors" : err,
+			})
+		}else{
+			bookRes := convertToBookResponse(book)
+			c.JSON(http.StatusAccepted, gin.H{
+				"data" : bookRes,
+			})
+		}
+	}
+}
+
 /*GET*/
-//function biasa
+//function rooter
 func (handler *bookHandler)RootHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"name" : "Desta",
-		"status" : "Belajar Golang",
+		"status" : "Welcome to My API withh Golang-Gin Library",
 	})
 }
 
@@ -67,15 +102,44 @@ func (handler *bookHandler)GetBookHandler(c *gin.Context){
 	c.JSON(http.StatusOK, gin.H{"data": bookRes})
 }
 
-// func (handler *bookHandler)BooksHandlers(c *gin.Context){
-// 	//mengambil parameter id dan title
-// 	id := c.Param("id")
-// 	title := c.Param("title")
+/*PUT*/
+func (handler *bookHandler) PutBookHandler(c *gin.Context){
+	//membuat variable input
+	var bookInput books.BookRequest
 
-// 	c.JSON(http.StatusOK, gin.H{"id": id, "title": title})
-// }
+	err := c.ShouldBindJSON(&bookInput)
+	if err != nil{
+		//slice err
+		errorMessages := []string{}
+		//validation error
+		for _, e:= range err.(validator.ValidationErrors){
+			errorMessage := fmt.Sprintf("Error on %s, where condition %s", e.Field(), e.ActualTag())
+			errorMessages = append(errorMessages, errorMessage)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"errors" : errorMessages,
+			})
+		}
+	}
 
-// //function handler query untuk id
+	//Select the ID
+	idStr := c.Param("id")
+	//casting from string to int
+	id, _ := strconv.Atoi(idStr)
+
+	//status 204 untuk put
+	book, err := handler.bookService.Update(id, bookInput)
+	if err !=nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors" : err,
+		})
+		return
+	}
+	bookRes := convertToBookResponse(book)
+	c.JSON(http.StatusAccepted, gin.H{
+		"data" : bookRes,
+	})
+}
+
 // func (handler *bookHandler)QueryHandler(c *gin.Context){
 // 	//mengambil query id
 // 	id := c.Query("id")
@@ -92,39 +156,6 @@ func (handler *bookHandler)GetBookHandler(c *gin.Context){
 // 	c.JSON(http.StatusOK, gin.H{"title": title, "price": price})
 // }
 
-
-/*POST*/
-//function handler query untuk post
-func (handler *bookHandler)PostBookHandler(c *gin.Context){
-	//membuat variable input
-	var bookInput books.BookRequest
-
-	err := c.ShouldBindJSON(&bookInput)
-	if err != nil{
-		//slice err
-		errorMessages := []string{}
-		//validation error
-		for _, e:= range err.(validator.ValidationErrors){
-			errorMessage := fmt.Sprintf("Error on %s, where condition %s", e.Field(), e.ActualTag())
-			errorMessages = append(errorMessages, errorMessage)
-			c.JSON(http.StatusBadRequest, gin.H{
-				"errors" : errorMessages,
-			})
-		}
-	}else {
-		//status 201 untuk post
-		book, err := handler.bookService.Create(bookInput)
-		if err !=nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"errors" : err,
-			})
-		}else{
-			c.JSON(http.StatusCreated, gin.H{
-				"data" : book,
-			})
-		}
-	}
-}
 
 //private function for response json format
 func convertToBookResponse(b books.Book) books.BooksRequestResponse{

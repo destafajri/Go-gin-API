@@ -43,13 +43,14 @@ func main() {
 	//versioning v1
 	v1 := router.Group("/v1")
 
+	//router path
 	router.GET("/", bookHandler.RootHandler)
 	//v1 path for root request
 	v1.GET("/", bookHandler.RootHandler)
 	//path read book all
 	router.GET("/books", bookHandler.GetBooksHandler)
 	router.GET("/books/", bookHandler.GetBooksHandler)
-	//path dengan variable id
+	//path read dengan variable id
 	router.GET("/books/:id", bookHandler.GetBookHandler)
 	// //path dengan variable id dan title
 	// router.GET("/books/:id/:title", bookHandler.BooksHandlers)
@@ -57,6 +58,9 @@ func main() {
 	// router.GET("/query", bookHandler.QueryHandler)
 	// //membuat multi request query title dan price
 	// router.GET("/queries", bookHandler.QueryHandlers)
+	
+	//Update request
+	router.PUT("/books/:id", bookHandler.PutBookHandler)
 
 	//Post request
 	router.POST("/books", bookHandler.PostBookHandler)
