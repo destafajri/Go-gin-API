@@ -20,7 +20,7 @@ func NewBookHandler(bookService books.Service) *bookHandler{
 }
 
 /*GET*/
-//function handler
+//function biasa
 func (handler *bookHandler)RootHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"name" : "Desta",
@@ -30,13 +30,29 @@ func (handler *bookHandler)RootHandler(c *gin.Context) {
 
 //function handler read book all
 func (handler *bookHandler)GetBooksHandler(c *gin.Context){
-	books, err := handler.bookService.FindAll()
+	book, err := handler.bookService.FindAll()
 	if err != nil{
 		c.JSON(http.StatusBadRequest, gin.H{
 			"errors" : err,
 		})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": books})
+	//var get response
+	var bookRes []books.BooksRequestResponse
+
+	for _, b := range book{
+		booksRes := books.BooksRequestResponse{
+			ID:          b.ID,
+			Title:       b.Title,
+			Description: b.Description,
+			Price:       b.Price,
+			Rating:      b.Rating,
+			Discount:	 b.Discount,
+		}
+		bookRes= append(bookRes, booksRes)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": bookRes})
 }
 
 // //function handler membuat path untuk id
