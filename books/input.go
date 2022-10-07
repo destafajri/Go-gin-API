@@ -5,7 +5,7 @@ import (
 
 )
 
-/*POST*/
+/*POST API*/
 //membuat struct untuk menangkap data post request
 type BookInput struct{
 	//mengharuskan data json untuk diisi
