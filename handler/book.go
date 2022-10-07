@@ -10,9 +10,18 @@ import (
 	"pustaka-api/books"
 )
 
+//mengakses service
+type bookHandler struct{
+	bookService books.Service
+}
+
+func NewBookHandler(bookService books.Service) *bookHandler{
+	return &bookHandler{bookService}
+}
+
 /*GET*/
 //function handler
-func RootHandler(c *gin.Context) {
+func (handler *bookHandler)RootHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"name" : "Desta",
 		"status" : "Belajar Golang",
@@ -20,14 +29,14 @@ func RootHandler(c *gin.Context) {
 }
 
 //function handler membuat path untuk id
-func BooksHandler(c *gin.Context){
+func (handler *bookHandler)BooksHandler(c *gin.Context){
 	//mengambil parameter id
 	id := c.Param("id")
 
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
-func BooksHandlers(c *gin.Context){
+func (handler *bookHandler)BooksHandlers(c *gin.Context){
 	//mengambil parameter id dan title
 	id := c.Param("id")
 	title := c.Param("title")
@@ -36,7 +45,7 @@ func BooksHandlers(c *gin.Context){
 }
 
 //function handler query untuk id
-func QueryHandler(c *gin.Context){
+func (handler *bookHandler)QueryHandler(c *gin.Context){
 	//mengambil query id
 	id := c.Query("id")
 
@@ -44,7 +53,7 @@ func QueryHandler(c *gin.Context){
 }
 
 //function handler query untuk title dan price
-func QueryHandlers(c *gin.Context){
+func (handler *bookHandler)QueryHandlers(c *gin.Context){
 	//mengambil query title dan price
 	title := c.Query("title")
 	price := c.Query("price")
@@ -55,9 +64,9 @@ func QueryHandlers(c *gin.Context){
 
 /*POST*/
 //function handler query untuk post
-func PostBookHandler(c *gin.Context){
+func (handler *bookHandler)PostBookHandler(c *gin.Context){
 	//membuat variable input
-	var bookInput books.BookInput
+	var bookInput books.BookRequest
 
 	err := c.ShouldBindJSON(&bookInput)
 	if err != nil{
@@ -74,10 +83,15 @@ func PostBookHandler(c *gin.Context){
 
 	}else {
 		//status 201 untuk post
-		c.JSON(http.StatusCreated, gin.H{
-			"title": bookInput.Title,
-			"price": bookInput.Price,
-			"email" : bookInput.Email,
-		})
+		book, err := handler.bookService.Create(bookInput)
+		if err !=nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"errors" : err,
+			})
+		}else{
+			c.JSON(http.StatusCreated, gin.H{
+				"data" : book,
+			})
+		}
 	}
 }

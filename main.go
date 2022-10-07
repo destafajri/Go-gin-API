@@ -26,30 +26,15 @@ func main() {
 	//database auto migrate
 	db.AutoMigrate(&books.Book{})
 
-	/*Layer Repository
-	main->repository->db->mysql
+	/*Layer Repository & Service
+	apps logic=>main->Handler/Controler->Service->repository->db->mysql
 	*/
 	//Repository
 	bookRepository := books.NewRepository(db)
-
-	//Create using repository function
-	bookCreate := books.Book{
-		Title : "Belajar Golang",
-		Price : 6000000,
-		Description: "ayo belajar biar pinter",
-	}
-	bookRepository.Create(bookCreate)
-
-	//FindBy ID  usingrepository function
-	book, err := bookRepository.FindByID(2)
-	fmt.Println(book.Title)
-	
-	//Find all using repository function
-	books, err := bookRepository.FindAll()
-	for _, book := range books{
-		fmt.Println(book.Title)
-	}
-
+	//Service
+	bookService := books.NewService(bookRepository)
+	//handler/controler
+	bookHandler := handler.NewBookHandler(bookService)
 
 
 /*********API Request**********/
@@ -58,20 +43,20 @@ func main() {
 	//versioning v1
 	v1 := router.Group("/v1")
 
-	router.GET("/", handler.RootHandler)
+	router.GET("/", bookHandler.RootHandler)
 	//v1 path for root request
-	v1.GET("/", handler.RootHandler)
+	v1.GET("/", bookHandler.RootHandler)
 	//path dengan variable id
-	router.GET("/books/:id", handler.BooksHandler)
+	router.GET("/books/:id", bookHandler.BooksHandler)
 	//path dengan variable id dan title
-	router.GET("/books/:id/:title", handler.BooksHandlers)
+	router.GET("/books/:id/:title", bookHandler.BooksHandlers)
 	//membuat request query untuk id
-	router.GET("/query", handler.QueryHandler)
+	router.GET("/query", bookHandler.QueryHandler)
 	//membuat multi request query title dan price
-	router.GET("/queries", handler.QueryHandlers)
+	router.GET("/queries", bookHandler.QueryHandlers)
 
 	//Post request
-	router.POST("/books", handler.PostBookHandler)
+	router.POST("/books", bookHandler.PostBookHandler)
 
 	//server
 	router.Run()
