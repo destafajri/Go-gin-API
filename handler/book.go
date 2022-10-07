@@ -28,38 +28,49 @@ func (handler *bookHandler)RootHandler(c *gin.Context) {
 	})
 }
 
-//function handler membuat path untuk id
-func (handler *bookHandler)BooksHandler(c *gin.Context){
-	//mengambil parameter id
-	id := c.Param("id")
-
-	c.JSON(http.StatusOK, gin.H{"id": id})
+//function handler read book all
+func (handler *bookHandler)GetBooksHandler(c *gin.Context){
+	books, err := handler.bookService.FindAll()
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors" : err,
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{"data": books})
 }
 
-func (handler *bookHandler)BooksHandlers(c *gin.Context){
-	//mengambil parameter id dan title
-	id := c.Param("id")
-	title := c.Param("title")
+// //function handler membuat path untuk id
+// func (handler *bookHandler)BookHandler(c *gin.Context){
+// 	//mengambil parameter id
+// 	id := c.Param("id")
 
-	c.JSON(http.StatusOK, gin.H{"id": id, "title": title})
-}
+// 	c.JSON(http.StatusOK, gin.H{"id": id})
+// }
 
-//function handler query untuk id
-func (handler *bookHandler)QueryHandler(c *gin.Context){
-	//mengambil query id
-	id := c.Query("id")
+// func (handler *bookHandler)BooksHandlers(c *gin.Context){
+// 	//mengambil parameter id dan title
+// 	id := c.Param("id")
+// 	title := c.Param("title")
 
-	c.JSON(http.StatusOK, gin.H{"id": id})
-}
+// 	c.JSON(http.StatusOK, gin.H{"id": id, "title": title})
+// }
 
-//function handler query untuk title dan price
-func (handler *bookHandler)QueryHandlers(c *gin.Context){
-	//mengambil query title dan price
-	title := c.Query("title")
-	price := c.Query("price")
+// //function handler query untuk id
+// func (handler *bookHandler)QueryHandler(c *gin.Context){
+// 	//mengambil query id
+// 	id := c.Query("id")
+
+// 	c.JSON(http.StatusOK, gin.H{"id": id})
+// }
+
+// //function handler query untuk title dan price
+// func (handler *bookHandler)QueryHandlers(c *gin.Context){
+// 	//mengambil query title dan price
+// 	title := c.Query("title")
+// 	price := c.Query("price")
 	
-	c.JSON(http.StatusOK, gin.H{"title": title, "price": price})
-}
+// 	c.JSON(http.StatusOK, gin.H{"title": title, "price": price})
+// }
 
 
 /*POST*/
@@ -80,7 +91,6 @@ func (handler *bookHandler)PostBookHandler(c *gin.Context){
 				"errors" : errorMessages,
 			})
 		}
-
 	}else {
 		//status 201 untuk post
 		book, err := handler.bookService.Create(bookInput)

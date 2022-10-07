@@ -2,18 +2,19 @@ package books
 
 import "gorm.io/gorm"
 
+//kontrak
 type Respository interface {
 	FindAll() ([]Book, error)
 	FindByID(ID int) (Book, error)
 	Create(book Book) (Book, error)
 }
 
-// private struct
 type respository struct {
 	db *gorm.DB
 
 }
 
+//implementasi repository
 func NewRepository(db *gorm.DB) *respository{
 	return &respository{db}
 }

@@ -1,5 +1,6 @@
 package books
 
+//kontrak
 type Service interface{
 	FindAll() ([]Book, error)
 	FindByID(ID int) (Book, error)
@@ -10,6 +11,7 @@ type service struct{
 	respository Respository
 }
 
+//implementasi service
 func NewService(respository Respository) *service{
 	return &service{respository}
 }
