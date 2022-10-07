@@ -40,7 +40,7 @@ func (handler *bookHandler)PostBookHandler(c *gin.Context){
 			})
 		}
 	}else {
-		//status 201 untuk post
+		//status 201 for post
 		book, err := handler.bookService.Create(bookInput)
 		if err !=nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -119,6 +119,7 @@ func (handler *bookHandler) PutBookHandler(c *gin.Context){
 				"errors" : errorMessages,
 			})
 		}
+		return
 	}
 
 	//Select the ID
@@ -126,8 +127,28 @@ func (handler *bookHandler) PutBookHandler(c *gin.Context){
 	//casting from string to int
 	id, _ := strconv.Atoi(idStr)
 
-	//status 204 untuk put
+	//status 201 for put
 	book, err := handler.bookService.Update(id, bookInput)
+	if err !=nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors" : err,
+		})
+		return
+	}
+	bookRes := convertToBookResponse(book)
+	c.JSON(http.StatusCreated, gin.H{
+		"data" : bookRes,
+	})
+}
+
+func (handler *bookHandler)DeleteBookHandler(c *gin.Context){
+	//Select the ID
+	idStr := c.Param("id")
+	//casting from string to int
+	id, _ := strconv.Atoi(idStr)
+
+	//status 202 for delete
+	book, err := handler.bookService.Delete(id)
 	if err !=nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"errors" : err,
@@ -139,23 +160,6 @@ func (handler *bookHandler) PutBookHandler(c *gin.Context){
 		"data" : bookRes,
 	})
 }
-
-// func (handler *bookHandler)QueryHandler(c *gin.Context){
-// 	//mengambil query id
-// 	id := c.Query("id")
-
-// 	c.JSON(http.StatusOK, gin.H{"id": id})
-// }
-
-// //function handler query untuk title dan price
-// func (handler *bookHandler)QueryHandlers(c *gin.Context){
-// 	//mengambil query title dan price
-// 	title := c.Query("title")
-// 	price := c.Query("price")
-	
-// 	c.JSON(http.StatusOK, gin.H{"title": title, "price": price})
-// }
-
 
 //private function for response json format
 func convertToBookResponse(b books.Book) books.BooksRequestResponse{

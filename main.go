@@ -15,6 +15,7 @@ import (
 
 func main() {
 	fmt.Println("Welcome to my API....")
+
 /****************Database***************/
 	//database connection
 	dsn := "root:@tcp(127.0.0.1:3306)/intern_privy?charset=utf8mb4&parseTime=True&loc=Local"
@@ -47,23 +48,21 @@ func main() {
 	router.GET("/", bookHandler.RootHandler)
 	//v1 path for root request
 	v1.GET("/", bookHandler.RootHandler)
-	//path read book all
+
+	//Get all books request
 	router.GET("/books", bookHandler.GetBooksHandler)
 	router.GET("/books/", bookHandler.GetBooksHandler)
-	//path read dengan variable id
+	//Get single request books with id
 	router.GET("/books/:id", bookHandler.GetBookHandler)
-	// //path dengan variable id dan title
-	// router.GET("/books/:id/:title", bookHandler.BooksHandlers)
-	// //membuat request query untuk id
-	// router.GET("/query", bookHandler.QueryHandler)
-	// //membuat multi request query title dan price
-	// router.GET("/queries", bookHandler.QueryHandlers)
-	
+
 	//Update request
 	router.PUT("/books/:id", bookHandler.PutBookHandler)
 
 	//Post request
 	router.POST("/books", bookHandler.PostBookHandler)
+
+	//Delete request
+	router.DELETE("/books/:id", bookHandler.DeleteBookHandler)
 
 	//server
 	router.Run()
