@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -37,31 +38,34 @@ func (handler *bookHandler)GetBooksHandler(c *gin.Context){
 		})
 		return
 	}
-	//var get response
-	var bookRes []books.BooksRequestResponse
 
+	//var get response bentuk json
+	var bookRes []books.BooksRequestResponse
 	for _, b := range book{
-		booksRes := books.BooksRequestResponse{
-			ID:          b.ID,
-			Title:       b.Title,
-			Description: b.Description,
-			Price:       b.Price,
-			Rating:      b.Rating,
-			Discount:	 b.Discount,
-		}
+		booksRes := convertToBookResponse(b)
 		bookRes= append(bookRes, booksRes)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": bookRes})
 }
 
-// //function handler membuat path untuk id
-// func (handler *bookHandler)BookHandler(c *gin.Context){
-// 	//mengambil parameter id
-// 	id := c.Param("id")
+//function handler read/get single book
+func (handler *bookHandler)GetBookHandler(c *gin.Context){
+	idStr := c.Param("id")
+	//casting from string to int
+	id, _ := strconv.Atoi(idStr)
 
-// 	c.JSON(http.StatusOK, gin.H{"id": id})
-// }
+	book, err := handler.bookService.FindByID(id)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors" : err,
+		})
+		return
+	}
+
+	bookRes := convertToBookResponse(book)
+	c.JSON(http.StatusOK, gin.H{"data": bookRes})
+}
 
 // func (handler *bookHandler)BooksHandlers(c *gin.Context){
 // 	//mengambil parameter id dan title
@@ -119,5 +123,17 @@ func (handler *bookHandler)PostBookHandler(c *gin.Context){
 				"data" : book,
 			})
 		}
+	}
+}
+
+//private function for response json format
+func convertToBookResponse(b books.Book) books.BooksRequestResponse{
+	return books.BooksRequestResponse{
+		ID:          b.ID,
+		Title:       b.Title,
+		Description: b.Description,
+		Price:       b.Price,
+		Rating:      b.Rating,
+		Discount:	 b.Discount,
 	}
 }

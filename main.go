@@ -50,7 +50,7 @@ func main() {
 	router.GET("/books", bookHandler.GetBooksHandler)
 	router.GET("/books/", bookHandler.GetBooksHandler)
 	//path dengan variable id
-	// router.GET("/books/:id", bookHandler.BookHandler)
+	router.GET("/books/:id", bookHandler.GetBookHandler)
 	// //path dengan variable id dan title
 	// router.GET("/books/:id/:title", bookHandler.BooksHandlers)
 	// //membuat request query untuk id
